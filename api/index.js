@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const userRoute = require("./routes/user.route.js");
+const userRoute = require("./routes/userRoute");
 
 
 app.get("/", (req, res) => res.json({ name: "Talal" }));
