@@ -39,7 +39,22 @@ const getUser = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  const params = req.params;
+  console.log(params);
+  try {
+    const allUser = await prisma.user.delete({ where: { id: params.id } });
+
+    // Respond with the newly created user
+    return res.json(allUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to create user" });
+  }
+};
+
 module.exports = {
   createNewUser,
   getUser,
+  deleteUser,
 };

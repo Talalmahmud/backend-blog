@@ -25,5 +25,3 @@ app.use((err, req, res, next) => {
 // Consistent port logging
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server ready on port ${PORT}.`));
-
-module.exports = app;
