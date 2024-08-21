@@ -53,8 +53,31 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  const params = req.params;
+  const name = req.query.name;
+  const email = req.query.email;
+
+  try {
+    const allUser = await prisma.user.update({
+      where: { id: params?.id },
+      data: {
+        name: name,
+        email: email,
+      },
+    });
+
+    // Respond with the newly created user
+    return res.json(allUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to create user" });
+  }
+};
+
 module.exports = {
   createNewUser,
   getUser,
   deleteUser,
+  updateUser,
 };
