@@ -52,7 +52,7 @@ const getUser = async (req, res) => {
     return res.json(allUser);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to create user" });
+    res.status(500).json({ error: error });
   }
 };
 
