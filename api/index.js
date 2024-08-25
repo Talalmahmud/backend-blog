@@ -1,8 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const userRoute = require("./routes/userRoute");
+const { config } = require("dotenv");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -23,7 +25,7 @@ app.use((err, req, res, next) => {
 });
 
 // Consistent port logging
-const PORT = 8000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server ready on port ${PORT}.`));
 
 module.exports = app;

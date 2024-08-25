@@ -48,9 +48,6 @@ const getUser = async (req, res) => {
         createdAt: true,
         updatedAt: true,
       },
-      orderBy: {
-        createdAt: "desc",
-      },
     });
 
     // Respond with the newly created user
