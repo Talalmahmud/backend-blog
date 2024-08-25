@@ -1,8 +1,9 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const bcrypt = require("bcrypt");
 
 const createNewUser = async (req, res) => {
-  const { email } = req.body;
+  const { email, password, name } = req.body;
 
   const existUser = await prisma.user.findUnique({
     where: {
@@ -11,8 +12,14 @@ const createNewUser = async (req, res) => {
   });
 
   if (!existUser) {
+    const hashPassword = await bcrypt.hash(password, 10);
+    const bodyData = {
+      name: name,
+      email: email,
+      password: hashPassword,
+    };
     try {
-      const newUser = await prisma.user.create({ data: req.body });
+      const newUser = await prisma.user.create({ data: bodyData });
 
       // Respond with the newly created user
       return res.json(newUser);
@@ -29,7 +36,17 @@ const getUser = async (req, res) => {
   const params = req.params;
   console.log(params);
   try {
-    const allUser = await prisma.user.findMany({});
+    const allUser = await prisma.user.findMany({
+      select: {
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
     // Respond with the newly created user
     return res.json(allUser);
