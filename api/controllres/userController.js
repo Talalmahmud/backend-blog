@@ -29,17 +29,15 @@ const createNewUser = async (req, res) => {
     const newUser = await prisma.user.create({ data: bodyData });
 
     // Respond with the newly created user
-    return res.json(newUser);
+    return res.status(200).json(newUser);
   } catch (error) {
     // Catch any error during user creation and respond with a 500 status code
     console.error(error);
-    return res.status(500).json({ error: "Failed to create user" });
+    return res.status(500).json({ error });
   }
 };
 
 const getUser = async (req, res) => {
-  const params = req.params;
-  console.log(params);
   try {
     const allUser = await prisma.user.findMany({
       select: {
@@ -47,14 +45,14 @@ const getUser = async (req, res) => {
         email: true,
         createdAt: true,
         updatedAt: true,
+        id: true,
       },
     });
 
     // Respond with the newly created user
-    return res.json(allUser);
+    return res.status(200).json(allUser);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error });
+    res.status(500).json({ error });
   }
 };
 
@@ -65,10 +63,25 @@ const deleteUser = async (req, res) => {
     const allUser = await prisma.user.delete({ where: { id: params.id } });
 
     // Respond with the newly created user
-    return res.json(allUser);
+    return res.status(200).json(allUser);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to create user" });
+    res.status(500).json({ error });
+  }
+};
+
+const getUserById = async (req, res) => {
+  const params = req.params;
+  console.log(params);
+  try {
+    const singleUser = await prisma.user.findUnique({
+      where: { id: params.id },
+      select: { name: true, email: true },
+    });
+
+    // Respond with the newly created user
+    return res.status(200).json(singleUser);
+  } catch (error) {
+    res.status(500).json({ error });
   }
 };
 
@@ -87,10 +100,10 @@ const updateUser = async (req, res) => {
     });
 
     // Respond with the newly created user
-    return res.json(allUser);
+    return res.status(200).json(allUser);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to create user" });
+    res.status(500).json({ error });
   }
 };
 
@@ -99,4 +112,5 @@ module.exports = {
   getUser,
   deleteUser,
   updateUser,
+  getUserById,
 };
