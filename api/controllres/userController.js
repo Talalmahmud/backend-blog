@@ -1,34 +1,39 @@
+const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const bcrypt = require("bcrypt");
 
 const createNewUser = async (req, res) => {
   const { email, password, name } = req.body;
 
+  // Check if the user already exists
   const existUser = await prisma.user.findUnique({
     where: {
       email: email,
     },
   });
 
-  if (!existUser) {
+  if (existUser) {
+    // Return with 409 Conflict if user already exists
+    return res.status(409).json({ error: "User already registered." });
+  }
+
+  try {
+    // Hash the password and create the new user
     const hashPassword = await bcrypt.hash(password, 10);
     const bodyData = {
       name: name,
       email: email,
       password: hashPassword,
     };
-    try {
-      const newUser = await prisma.user.create({ data: bodyData });
 
-      // Respond with the newly created user
-      return res.json(newUser);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Failed to create user" });
-    }
-  } else {
-    res.status(500).json({ error: "User already registered." });
+    const newUser = await prisma.user.create({ data: bodyData });
+
+    // Respond with the newly created user
+    return res.json(newUser);
+  } catch (error) {
+    // Catch any error during user creation and respond with a 500 status code
+    console.error(error);
+    return res.status(500).json({ error: "Failed to create user" });
   }
 };
 
